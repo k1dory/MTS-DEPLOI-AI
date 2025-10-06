@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: moscow-upf-service
+  namespace: telecom
+  labels:
+    app: moscow-upf
+    operator: mts
+    component: 5g_upf
+spec:
+  selector:
+    app: moscow-upf
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  - name: gtpu
+    port: 2152
+    targetPort: 2152
+    protocol: UDP
+  type: ClusterIP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
