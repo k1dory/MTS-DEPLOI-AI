@@ -1,4 +1,4 @@
- MTS Deploy AI 🚀
+ # MTS Deploy AI 
 
 **AI-powered инструмент автоматизации деплоя для телеком-инфраструктуры МТС**
 
@@ -11,19 +11,19 @@
 
 ---
 
-## 📋 Описание проекта
+##  Описание проекта
 
 **MTS Deploy AI** — это MCP (Model Context Protocol) сервер на базе Claude AI, который революционизирует процесс деплоя телеком-компонентов, сокращая время настройки инфраструктуры с часов до минут.
 
 ###  Решаемая проблема
 
 Традиционное создание конфигураций для деплоя требует:
-- ⏱️ **4-9 часов** ручной работы для каждого сервиса
-- 📚 Глубоких знаний Kubernetes, CI/CD, 5G-архитектуры
-- 🐛 Высокий риск ошибок в конфигурациях
-- 📝 Отсутствие стандартизации и документации
+-  **4-9 часов** ручной работы для каждого сервиса
+-  Глубоких знаний Kubernetes, CI/CD, 5G-архитектуры
+-  Высокий риск ошибок в конфигурациях
+-  Отсутствие стандартизации и документации
 
-###  Наше решение
+### Наше решение
 
 AI-ассистент, который **за 2-5 минут** автоматически генерирует:
 - **Kubernetes манифесты** (Deployment, Service, HPA, PVC)
@@ -35,9 +35,9 @@ AI-ассистент, который **за 2-5 минут** автоматич
 
 ---
 
-##   Ключевые возможности
+##  Ключевые возможности
 
-###  Телеком-специфика
+### 🔧 Телеком-специфика
 - ✅ **5G Network Functions**: UPF, AMF, SMF с поддержкой Multus CNI
 - ✅ **Множественные сетевые интерфейсы** (N1-N7 для 5G)
 - ✅ **NetworkAttachmentDefinitions** для телеком-компонентов
@@ -61,7 +61,7 @@ AI-ассистент, который **за 2-5 минут** автоматич
 
 ---
 
-## 🏗️ Архитектура
+##  Архитектура
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -86,8 +86,8 @@ AI-ассистент, который **за 2-5 минут** автоматич
 │                                                              │
 │  1️⃣ generate_telecom_manifest  ─┐                           │
 │  2️⃣ generate_k8s_manifest       │                           │
-│  3️⃣ generate_cicd_pipeline      ├──► Claude LLM             │
-│  4️⃣ generate_documentation      │    (Anthropic API)        │
+│  3️⃣ generate_cicd_pipeline      ├──► Claude LLM            │
+│  4️⃣ generate_documentation      │    (Anthropic API)       │
 │  5️⃣ troubleshoot_deployment     │                           │
 │  6️⃣ apply_auto_fix             ─┘                           │
 │  7️⃣ analyze_cost                                            │
@@ -99,31 +99,31 @@ AI-ассистент, который **за 2-5 минут** автоматич
 ┌─────────────────────────────────────────────────────────────┐
 │                     РЕЗУЛЬТАТЫ                               │
 ├─────────────────────────────────────────────────────────────┤
-│  📁 Kubernetes Manifests  (deployment.yaml, service.yaml)   │
-│  📁 CI/CD Configs        (.gitlab-ci.yml, Jenkinsfile)      │
-│  📁 Documentation        (RUNBOOK.md, README.md)            │
-│  📁 Auto-fixes           (kubectl patch commands)           │
-│  📊 Cost Reports         (optimization suggestions)         │
-│  🔒 Security Reports     (compliance analysis)              │
+│     Kubernetes Manifests  (deployment.yaml, service.yaml)   │
+│     CI/CD Configs        (.gitlab-ci.yml, Jenkinsfile)      │
+│     Documentation        (RUNBOOK.md, README.md)            │
+│     Auto-fixes           (kubectl patch commands)           │
+│     Cost Reports         (optimization suggestions)         │
+│     Security Reports     (compliance analysis)              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🚀 Быстрый старт
+##  Быстрый старт
 
 ### Вариант 1: Автоматическая установка (Рекомендуется)
 
 #### Windows:
 ```bash
-git clone https://github.com/k1dory/mts-deploy-ai.git
+git clone https://github.com/your-org/mts-deploy-ai.git
 cd mts-deploy-ai
 setup.bat
 ```
 
 #### Linux/Mac:
 ```bash
-git clone https://github.com/k1dory/mts-deploy-ai.git
+git clone https://github.com/your-org/mts-deploy-ai.git
 cd mts-deploy-ai
 bash setup.sh
 ```
@@ -162,7 +162,7 @@ pytest tests/ -v
 
 ---
 
-## 💻 Использование
+##  Использование
 
 ### Интеграция с Claude Desktop
 
@@ -187,7 +187,7 @@ pytest tests/ -v
 
 ### Примеры использования
 
-#### 1️⃣ Деплой 5G UPF компонента
+####  Деплой 5G UPF компонента
 
 **Промпт в Claude:**
 ```
@@ -195,16 +195,16 @@ Deploy 5G User Plane Function for Moscow region with 10Gbps throughput and high 
 ```
 
 **Результат:**
-- ✅ deployment.yaml (5 реплик с PodAntiAffinity)
-- ✅ service.yaml (ClusterIP с session affinity)
-- ✅ hpa.yaml (autoscaling 3-15 pods)
-- ✅ pvc.yaml (100Gi fast-ssd)
-- ✅ network-attachment.yaml (N3, N4, N6 интерфейсы)
-- ✅ RUNBOOK.md (документация)
+- deployment.yaml (5 реплик с PodAntiAffinity)
+-  service.yaml (ClusterIP с session affinity)
+-  hpa.yaml (autoscaling 3-15 pods)
+-  pvc.yaml (100Gi fast-ssd)
+-  network-attachment.yaml (N3, N4, N6 интерфейсы)
+-  RUNBOOK.md (документация)
 
 **Время:** 2-3 минуты
 
-#### 2️⃣ Биллинговая система
+####  Биллинговая система
 
 **Промпт:**
 ```
@@ -212,15 +212,15 @@ Create billing system with PostgreSQL and Redis, 3 replicas, production-ready
 ```
 
 **Результат:**
-- ✅ Deployment с подключением к БД
-- ✅ Secret для credentials (с placeholders)
-- ✅ Service + HPA
-- ✅ ConfigMap с настройками
-- ✅ Документация
+-  Deployment с подключением к БД
+-  Secret для credentials (с placeholders)
+-  Service + HPA
+-  ConfigMap с настройками
+-  Документация
 
 **Время:** 2 минуты
 
-#### 3️⃣ CI/CD Pipeline
+####  CI/CD Pipeline
 
 **Промпт:**
 ```
@@ -241,7 +241,7 @@ stages:
 
 **Время:** 1 минута
 
-#### 4️⃣ Auto-Troubleshooting (NEW!)
+####  Auto-Troubleshooting (NEW!)
 
 **Промпт:**
 ```
@@ -250,7 +250,7 @@ Troubleshoot deployment test-upf in namespace telecom
 
 **Результат:**
 ```
-📊 ДИАГНОСТИКА:
+ ДИАГНОСТИКА:
 Проблема: ImagePullBackOff
 Корневая причина: Неверный URL образа
 Критичность: high
@@ -258,12 +258,12 @@ Troubleshoot deployment test-upf in namespace telecom
 🔧 АВТОМАТИЧЕСКОЕ РЕШЕНИЕ:
 kubectl set image deployment/test-upf upf=registry.mts.ru/5g/upf:v1.2.3 -n telecom
 
-✅ Безопасно применить
+ Безопасно применить
 ```
 
 **Время:** 30 секунд
 
-#### 5️⃣ Cost Optimization (NEW!)
+####  Cost Optimization 
 
 **Промпт:**
 ```
@@ -272,10 +272,10 @@ Analyze cost for my manifests and suggest optimizations
 
 **Результат:**
 ```
-💰 ТЕКУЩАЯ СТОИМОСТЬ: 45,000₽/мес
-✅ ОПТИМИЗИРОВАННАЯ: 28,000₽/мес
-📉 ЭКОНОМИЯ: 17,000₽/мес (38%)
-💵 ЭКОНОМИЯ В ГОД: 204,000₽
+ ТЕКУЩАЯ СТОИМОСТЬ: 45,000₽/мес
+ ОПТИМИЗИРОВАННАЯ: 28,000₽/мес
+ ЭКОНОМИЯ: 17,000₽/мес (38%)
+ ЭКОНОМИЯ В ГОД: 204,000₽
 
 ОПТИМИЗАЦИИ:
 • reduce_cpu (billing): 4→2 cores (-8,000₽/мес)
@@ -283,9 +283,33 @@ Analyze cost for my manifests and suggest optimizations
 • optimize_hpa: minReplicas 5→3 (-3,000₽/мес)
 ```
 
+####  Security Analysis
+
+**Промпт:**
+```
+Analyze security of my manifests
+```
+
+**Результат:**
+```
+ SECURITY SCORE: 85/100 (Grade: B)
+
+COMPLIANCE:
+✅ pod_security_baseline
+✅ zero_trust_ready
+❌ pod_security_restricted (2 issues)
+
+CRITICAL ISSUES (2):
+• Privileged containers detected
+• Network policies missing
+
+AUTO-FIXES AVAILABLE:
+kubectl patch deployment app --type=json -p='[...]'
+```
+
 ---
 
-## 📊 Метрики эффективности
+##  Метрики эффективности
 
 ### Экономия времени
 
@@ -299,10 +323,10 @@ Analyze cost for my manifests and suggest optimizations
 
 ### Качество кода
 
-- ✅ **58/58 тестов** пройдено (100%)
-- ✅ **0 критических багов** (после QA)
-- ✅ **0 уязвимостей** (security audit)
-- ✅ **Production-ready** качество
+-  **58/58 тестов** пройдено (100%)
+-  **0 критических багов** (после QA)
+-  **0 уязвимостей** (security audit)
+-  **Production-ready** качество
 
 ### ROI для МТС
 
@@ -321,11 +345,11 @@ Analyze cost for my manifests and suggest optimizations
 - Стоимость: 3.3 × 3,000₽ = 10,000₽/неделю
 - **В год: 520,000₽**
 
-**💰 ЭКОНОМИЯ: 18,200,000₽ в год (97%)**
+** ЭКОНОМИЯ: 18,200,000₽ в год (97%)**
 
 ---
 
-## 📂 Структура проекта
+##  Структура проекта
 
 ```
 mts-deploy-ai/
@@ -339,8 +363,8 @@ mts-deploy-ai/
 │       │   ├── cicd_generator.py        # CI/CD пайплайны
 │       │   ├── doc_generator.py         # Документация
 │       │   ├── troubleshooter.py        # Auto-troubleshooting
-│       │   ├── cost_optimizer.py        # Cost анализ 
-│       │   └── security_analyzer.py     # Security анализ 
+│       │   ├── cost_optimizer.py        # Cost анализ 💰
+│       │   └── security_analyzer.py     # Security анализ 🔒
 │       ├── llm/
 │       │   └── claude_client.py         # Claude API клиент
 │       └── utils/
@@ -380,7 +404,7 @@ mts-deploy-ai/
 
 ---
 
-## 🔧 Технологический стек
+##  Технологический стек
 
 ### Backend
 - **Python 3.11+** - основной язык
@@ -406,7 +430,7 @@ mts-deploy-ai/
 
 ---
 
-## 🧪 Тестирование
+##  Тестирование
 
 ### Запуск тестов
 
@@ -427,17 +451,17 @@ pytest tests/ --cov=src --cov-report=html
 ### Результаты тестирования
 
 ```
-✅ test_validation.py          15/15 PASSED
-✅ test_telecom_generator.py   14/14 PASSED
-✅ test_cost_optimizer.py       9/9 PASSED
-✅ test_encoding_fix.py         5/5 PASSED
+ test_validation.py          15/15 PASSED
+ test_telecom_generator.py   14/14 PASSED
+ test_cost_optimizer.py       9/9 PASSED
+ test_encoding_fix.py         5/5 PASSED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ TOTAL: 43/43 PASSED (100%)
+ TOTAL: 43/43 PASSED (100%)
 ```
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Проблема: `ANTHROPIC_API_KEY not set`
 
@@ -472,7 +496,7 @@ chcp 65001
 
 ---
 
-## 📄 Документация
+##  Документация
 
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Подробная архитектура и инфраструктура
 - **[DEVOPS.md](docs/DEVOPS.md)** - DevOps процессы и CI/CD
@@ -481,10 +505,7 @@ chcp 65001
 
 ---
 
-
----
-
-## 🤝 Для разработчиков
+##  Для разработчиков
 
 ### Добавление нового телеком-компонента
 
@@ -517,9 +538,9 @@ LOG_LEVEL=DEBUG python -m src.mcp_server.server
 
 ---
 
-## 🌐 Совместимость с API из России
+##  Совместимость с API из России
 
-✅ **Anthropic Claude API работает из России** (в отличие от OpenAI)
+ **Anthropic Claude API работает из России** (в отличие от OpenAI)
 
 - Не требует VPN
 - Стабильное соединение
@@ -538,7 +559,7 @@ LOG_LEVEL=DEBUG python -m src.mcp_server.server
 
 ---
 
-## 📚 Дополнительные ресурсы
+##  Дополнительные ресурсы
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [Anthropic Claude API](https://docs.anthropic.com/)
@@ -547,7 +568,7 @@ LOG_LEVEL=DEBUG python -m src.mcp_server.server
 
 ---
 
-## 👥 Команда
+##  Команда
 
 **MTS Engineering HACK Team 2025**
 
@@ -555,7 +576,7 @@ LOG_LEVEL=DEBUG python -m src.mcp_server.server
 
 ---
 
-## 📄 Лицензия
+##  Лицензия
 
 MIT License - см. [LICENSE](LICENSE) файл
 
@@ -565,4 +586,3 @@ MIT License - см. [LICENSE](LICENSE) файл
 
 **Версия:** 1.0.0
 **Дата:** 2025-10-05
-**Статус:** ✅ Production Ready (58/58 тестов)
