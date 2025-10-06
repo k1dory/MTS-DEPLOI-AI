@@ -1,0 +1,126 @@
+# ============================================================================
+# HORIZONTAL POD AUTOSCALER TEMPLATE
+# ============================================================================
+# Purpose: Automatically scale Deployment based on CPU/Memory metrics
+#
+# Required Variables:
+#   - service_name: Name of the deployment to scale
+#   - namespace: Kubernetes namespace
+#
+# Optional Variables:
+#   - min_replicas: Minimum pods (default: 3)
+#   - max_replicas: Maximum pods (default: 10)
+#   - cpu_target: CPU utilization % (default: 70)
+#   - memory_target: Memory utilization % (default: 80)
+#
+# Scaling Behavior:
+#   - Scale UP: Fast (+50% every 60s) - quick response to traffic spikes
+#   - Scale DOWN: Slow (-10% every 60s) - prevent flapping
+#   - Stabilization: 300s for scale down, 0s for scale up
+#
+# When to Use:
+#   ✓ Production workloads with variable traffic
+#   ✓ Microservices with unpredictable load
+#   ✓ Services that can scale horizontally (stateless)
+#
+# When NOT to Use:
+#   ✗ Stateful applications (databases, caches)
+#   ✗ Services with fixed resource requirements
+#   ✗ Dev/staging environments (use fixed replicas)
+#
+# Example Usage:
+#   template.render(
+#       service_name='billing',
+#       namespace='production',
+#       min_replicas=5,
+#       max_replicas=20,
+#       cpu_target=60
+#   )
+#
+# Cost Impact:
+#   HPA can significantly reduce costs by scaling down during low traffic
+#   Example: 10 pods → 3 pods at night = 70% cost savings off-peak
+# ============================================================================
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ service_name }}-hpa
+  namespace: {{ namespace }}
+  labels:
+    app: {{ service_name }}
+    managed-by: mts-deploy-ai
+  annotations:
+    description: "Auto-scaling for {{ service_name }}"
+
+spec:
+  # Target deployment to scale
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ service_name }}
+
+  # Replica limits
+  minReplicas: {{ min_replicas | default(3) }}
+  maxReplicas: {{ max_replicas | default(10) }}
+
+  # Metrics to observe
+  metrics:
+  # CPU-based scaling
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ cpu_target | default(70) }}  # Scale up if CPU > 70%
+
+  # Memory-based scaling
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ memory_target | default(80) }}  # Scale up if Memory > 80%
+
+  {% if custom_metrics %}
+  # Custom metrics (e.g., queue length, request rate)
+  {% for metric in custom_metrics %}
+  - type: {{ metric.type }}
+    {{ metric.type | lower }}:
+      metric:
+        name: {{ metric.name }}
+      target:
+        type: {{ metric.target_type }}
+        {{ metric.target_key }}: {{ metric.target_value }}
+  {% endfor %}
+  {% endif %}
+
+  # Scaling behavior (fine-tuning)
+  behavior:
+    # Scale DOWN behavior (conservative to prevent flapping)
+    scaleDown:
+      stabilizationWindowSeconds: {{ scale_down_stabilization | default(300) }}  # Wait 5 min before scaling down
+      policies:
+      - type: Percent
+        value: {{ scale_down_percent | default(10) }}  # Max 10% reduction per period
+        periodSeconds: 60
+      {% if scale_down_pods %}
+      - type: Pods
+        value: {{ scale_down_pods }}  # Or max N pods per period
+        periodSeconds: 60
+      {% endif %}
+      selectPolicy: Min  # Use most conservative policy
+
+    # Scale UP behavior (aggressive to handle traffic spikes)
+    scaleUp:
+      stabilizationWindowSeconds: {{ scale_up_stabilization | default(0) }}  # No wait - scale up immediately
+      policies:
+      - type: Percent
+        value: {{ scale_up_percent | default(50) }}  # Max 50% increase per period
+        periodSeconds: 60
+      {% if scale_up_pods %}
+      - type: Pods
+        value: {{ scale_up_pods }}  # Or max N pods per period
+        periodSeconds: 60
+      {% endif %}
+      selectPolicy: Max  # Use most aggressive policy
