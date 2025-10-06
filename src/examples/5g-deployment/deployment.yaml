@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moscow-upf
+  namespace: telecom
+  labels:
+    app: moscow-upf
+    component: 5g_upf
+    operator: mts
+    tier: telecom
+    region: moscow
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: moscow-upf
+
+  template:
+    metadata:
+      labels:
+        app: moscow-upf
+        component: 5g_upf
+        version: v1
+        region: moscow
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+        # Multus CNI для множественных сетевых интерфейсов
+        k8s.v1.cni.cncf.io/networks: |
+          [
+            {
+              "name": "n3-network",
+              "interface": "n3",
+              "ips": ["10.100.0.10/24"]
+            },
+            {
+              "name": "n4-network",
+              "interface": "n4",
+              "ips": ["10.101.0.10/24"]
+            },
+            {
+              "name": "n6-network",
+              "interface": "n6",
+              "ips": ["10.102.0.10/24"]
+            }
+          ]
+
+    spec:
+      # Высокая доступность - каждый pod на отдельном узле
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - moscow-upf
+            topologyKey: kubernetes.io/hostname
+
+      priorityClassName: system-cluster-critical
+
+      containers:
+      - name: 5g_upf
+        image: registry.mts.ru/telecom/5g_upf:latest
+        imagePullPolicy: IfNotPresent
+
+        resources:
+          requests:
+            cpu: "4"
+            memory: "8Gi"
+          limits:
+            cpu: "8"
+            memory: "16Gi"
+
+        env:
+        - name: N3_IP
+          value: "10.100.0.10"
+        - name: N4_IP
+          value: "10.101.0.10"
+        - name: N6_IP
+          value: "10.102.0.10"
+        - name: COMPONENT_TYPE
+          value: "5g_upf"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: REGION
+          value: "moscow"
+        - name: THROUGHPUT
+          value: "10Gbps"
+
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        - containerPort: 2152
+          name: gtpu
+          protocol: UDP
+
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - SYS_ADMIN
+          runAsNonRoot: false
+
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/5g_upf
+        - name: config
+          mountPath: /etc/upf
+
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: moscow-upf-pvc
+      - name: config
+        configMap:
+          name: moscow-upf-config
