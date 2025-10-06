@@ -1,0 +1,60 @@
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: {{ registry | default('registry.mts.ru') }}
+  IMAGE_NAME: ${DOCKER_REGISTRY}/{{ project_name }}
+  K8S_NAMESPACE: {{ namespace | default('default') }}
+
+build:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $DOCKER_REGISTRY
+  script:
+    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker build -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $IMAGE_NAME:latest
+  only:
+    - main
+    - develop
+
+test:unit:
+  stage: test
+  image: {{ test_image | default('python:3.11-slim') }}
+  before_script:
+    - pip install -r requirements.txt
+    - pip install pytest pytest-cov
+  script:
+    - pytest tests/ -v --cov=src --cov-report=term
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+security:trivy:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH,CRITICAL $IMAGE_NAME:$CI_COMMIT_SHA
+  allow_failure: false
+
+deploy:production:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  before_script:
+    - kubectl config set-cluster k8s --server="$K8S_SERVER"
+    - kubectl config set-credentials gitlab --token="$K8S_TOKEN"
+    - kubectl config set-context default --cluster=k8s --user=gitlab
+    - kubectl config use-context default
+  script:
+    - kubectl set image deployment/{{ service_name }} {{ service_name }}=$IMAGE_NAME:$CI_COMMIT_SHA -n ${K8S_NAMESPACE}
+    - kubectl rollout status deployment/{{ service_name }} -n ${K8S_NAMESPACE}
+  environment:
+    name: production
+  when: manual
+  only:
+    - main
